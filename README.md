@@ -1,6 +1,6 @@
 This repository contains the data and source code for the following paper:
 
-* J. Urbano, M. Corsi and A. Hanjalic, "[How do Metric Score Distributions affect the Type I Error Rate of Statistical Significance Tests in Information Retrieval?](http://julian-urbano.info/files/publications/047-metric-score-distributions-affect-type-i-error-rate-statistical-significance-tests-information-retrieval.pdf)", *ACM SIGIR International Conference on the Theory of Information Retrieval*, 2021.
+* J. Urbano, M. Corsi and A. Hanjalic, "[How do Metric Score Distributions affect the Type I Error Rate of Statistical Significance Tests in Information Retrieval?](http://julian-urbano.info/files/publications/047-how-metric-score-distributions-affect-type-i-error-rate-statistical-significance-tests-information-retrieval.pdf)", *ACM SIGIR International Conference on the Theory of Information Retrieval*, 2021.
 
 A [single ZIP file](https://github.com/julian-urbano/ictir2021-metric/archive/master.zip) can be downloaded as well.
 

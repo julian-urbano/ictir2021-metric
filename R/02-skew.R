@@ -46,38 +46,38 @@ for(measure in .MEASURES){
                    .packages = c("VineCopula", "simIReff", "glue", "rio", "dplyr", "moments"),
                    .combine = "rbind",
                    .export = c("measure", "collection", "skew")) %dopar% {
-                     f <- glue("data/01-margins/{collection}_{measure}/{run1}.rds")
-                     if(file.exists(f)) {
-                       mar <- import(f) # margin of run1
-                       
-                       # For every pair or runs, compute statistics of the copula and the margin (run1's)
-                       d <- sapply(runs, function(run2) {
-                         f <- glue("data/03-bicops/{collection}_{measure}/{run1}_{run2}.rds")
-                         if(file.exists(f)) {
-                           cop <- import(f) # copula for run1-run2
-                           
-                           # Cap to par<=50 in Gumbel because of new restriction in VineCopula >= 2.3.0
-                           # This appears to be for numerical stability 
-                           # https://github.com/tnagler/VineCopula/issues/62
-                           if(cop$family %in% c(4,14,24,34)) {
-                             cop <- BiCop(cop$family, min(cop$par, 50))
-                           }
-                           
-                           s <- skew(cop, mar, trec[,run1], trec[,run2])
-                           
-                           data.frame(run1 = as.integer(gsub("run", "", run1)),
-                                      run2 = as.integer(gsub("run", "", run2)),
-                                      family = BiCopName(cop$family),
-                                      skew_trec = s[1],
-                                      skew_cop = s[2],
-                                      collection = collection
-                           )
-                         }else{
-                           NULL
-                         }
-                       }) %>% bind_rows()
-                     }
-                   }
+        f <- glue("data/01-margins/{collection}_{measure}/{run1}.rds")
+        if(file.exists(f)) {
+          mar <- import(f) # margin of run1
+          
+          # For every pair or runs, compute statistics of the copula and the margin (run1's)
+          d <- sapply(runs, function(run2) {
+            f <- glue("data/03-bicops/{collection}_{measure}/{run1}_{run2}.rds")
+            if(file.exists(f)) {
+              cop <- import(f) # copula for run1-run2
+              
+              # Cap to par<=50 in Gumbel because of new restriction in VineCopula >= 2.3.0
+              # This appears to be for numerical stability 
+              # https://github.com/tnagler/VineCopula/issues/62
+              if(cop$family %in% c(4,14,24,34)) {
+                cop <- BiCop(cop$family, min(cop$par, 50))
+              }
+              
+              s <- skew(cop, mar, trec[,run1], trec[,run2])
+              
+              data.frame(run1 = as.integer(gsub("run", "", run1)),
+                         run2 = as.integer(gsub("run", "", run2)),
+                         family = BiCopName(cop$family),
+                         skew_trec = s[1],
+                         skew_cop = s[2],
+                         collection = collection
+              )
+            }else{
+              NULL
+            }
+          }) %>% bind_rows()
+        }
+      }
     }
   }) %>% bind_rows()
   

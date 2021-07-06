@@ -32,10 +32,10 @@ for(measure in .MEASURES) {
   pdf(glue("{path_out}/barplot_{measure}.pdf"), width = 14/3, height = 3)
   # We do *2 below because there are 2 factors. Otherwise the y-axis wouldn't sum 100% per panel
   print(ggplot(dd) + aes(value, y = (..count..)/sum(..count..)*2) +
-    geom_bar() +
-    facet_grid(~name, drop = TRUE,  space = "free", scale = "free") +
-    labs(x = "", y = "Frequency", title = recode_measure(measure)) +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+          geom_bar() +
+          facet_grid(~name, drop = TRUE,  space = "free", scale = "free") +
+          labs(x = "", y = "Frequency", title = recode_measure(measure)) +
+          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
   )
   dev.off()
 }
@@ -115,12 +115,12 @@ d <- lapply(.MEASURES, function(measure) {
 
 pdf(glue("{path_out}/skewness.pdf"), width = 14, height = 4)
 print(ggplot(d, aes(skew_trec, skew_cop, color = copula)) +
-  geom_point(alpha = .1) +
-  facet_wrap(~measure, ncol = 5) +
-  lims(x = c(-3, 3), y = c(-3, 3)) +
-  labs(x = "Skewness of TREC data", y = "Skewness of simulated data", color = "Copula") +
-  guides(color = guide_legend(override.aes = list(alpha = 1))) +
-  theme(legend.position = "bottom"))
+        geom_point(alpha = .1) +
+        facet_wrap(~measure, ncol = 5) +
+        lims(x = c(-3, 3), y = c(-3, 3)) +
+        labs(x = "Skewness of TREC data", y = "Skewness of simulated data", color = "Copula") +
+        guides(color = guide_legend(override.aes = list(alpha = 1))) +
+        theme(legend.position = "bottom"))
 dev.off()
 
 jpeg(glue("{path_paper}/skewness.jpg"), width = 7, height = 3, res = 400, units = "in")

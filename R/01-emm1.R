@@ -38,41 +38,41 @@ for(measure in .MEASURES) {
   # in the end we'll use this to compute confidence intervals
   foreach(b = 0:.B, .packages = c("rio", "glue", "dplyr", "emmeans"),
           .export = c("measure", "path_out")) %dopar% {
-            set.seed(b)
-            
-            # bootstrap sample, stratified by (n,cop,margin)
-            dd <- d %>%
-              group_by(n, cop, margin) %>%
-              sample_frac(size = 1,
-                          replace = ifelse(b == 0, FALSE, TRUE)) %>% # don't resample when b=0
-              ungroup()
-            
-            # compute observed mean score and type 1 errors
-            dd <- dd %>%
-              group_by(n, cop, margin) %>%
-              summarize(d = mean(d),
-                        t2 = type1(t2),
-                        w2 = type1(w2),
-                        s2 = type1(s2),
-                        b2 = type1(b2),
-                        p2 = type1(p2))
-            
-            # fit model
-            m <- lm(cbind(d, t2, w2, s2, b2, p2) ~ (cop + margin + n)^2, dd)
-            
-            # compute effects (we do this "manually" because some combinations (eg. BB6-beta)
-            # do not have observations; emmeans does not handle those and just gives NA)
-            g <- ref_grid(m, mult.names = "statistic") %>%
-              as.data.frame() %>%
-              mutate(b = b) %>% # identify bootstrap sample
-              select(b, statistic, n, cop, margin, prediction)
-            
-            # and save
-            export(g, glue("{path_out}/{measure}/{b}.csv"))
-            
-            # free up memory
-            rm(dd); gc()
-          }
+    set.seed(b)
+    
+    # bootstrap sample, stratified by (n,cop,margin)
+    dd <- d %>%
+      group_by(n, cop, margin) %>%
+      sample_frac(size = 1,
+                  replace = ifelse(b == 0, FALSE, TRUE)) %>% # don't resample when b=0
+      ungroup()
+    
+    # compute observed mean score and type 1 errors
+    dd <- dd %>%
+      group_by(n, cop, margin) %>%
+      summarize(d = mean(d),
+                t2 = type1(t2),
+                w2 = type1(w2),
+                s2 = type1(s2),
+                b2 = type1(b2),
+                p2 = type1(p2))
+    
+    # fit model
+    m <- lm(cbind(d, t2, w2, s2, b2, p2) ~ (cop + margin + n)^2, dd)
+    
+    # compute effects (we do this "manually" because some combinations (eg. BB6-beta)
+    # do not have observations; emmeans does not handle those and just gives NA)
+    g <- ref_grid(m, mult.names = "statistic") %>%
+      as.data.frame() %>%
+      mutate(b = b) %>% # identify bootstrap sample
+      select(b, statistic, n, cop, margin, prediction)
+    
+    # and save
+    export(g, glue("{path_out}/{measure}/{b}.csv"))
+    
+    # free up memory
+    rm(dd); gc()
+  }
   # free up memory
   rm(d); gc()
 }
